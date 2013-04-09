@@ -51,10 +51,27 @@ module.exports = function () {
       });
     };
 
+    var limitBandwidth = function (downstreamKbps, upstreamKbps, latencyMillis) {
+      request.put(browsermobHost + proxyPort + '/limit',
+                  {form: { downstreamKbps: downstreamKbps, upstreamKbps: upstreamKbps, latency:latencyMillis, enable: true }},
+                  function (err, response, body) {
+        if (err && onError) return onError(err);
+        if (onSuccess) return onSuccess(response);
+      });
+    };
+
+    var unlimitBandwidth = function (downstreamKbps, upstreamKbps, latencyMillis) {
+      request.put(browsermobHost + proxyPort + '/limit', {form: { enable: false }}, function (err, response, body) {
+        if (err && onError) return onError(err);
+        if (onSuccess) return onSuccess(response);
+      });
+    };
+
     return {
       start: start,
       stop: stop,
-      newPage: newPage
+      newPage: newPage,
+      limitBandwidth: limitBandwidth
     };
   };
 }();
