@@ -1,8 +1,8 @@
 'use strict';
 
 var browsermobProxy = require('./browsermob-proxy')
-  , deferred = require('deferred')
   , expect = require('chai').expect
+  , spawn = require('child_process').spawn
   , webdriver = require('selenium-webdriver');
 
 xdescribe('Google Search', function () {
@@ -14,6 +14,7 @@ xdescribe('Google Search', function () {
   var driver;
 
   beforeEach(function (done) {
+    spawn('phantomjs', ['--webdriver=4444', '--proxy=localhost:9091']).unref();
     proxy.start(function onSuccess() {
       driver = new webdriver.Builder().usingServer('http://localhost:' + webdriverPort + '/wd/hub').build();
       done();
