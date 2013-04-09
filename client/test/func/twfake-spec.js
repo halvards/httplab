@@ -7,9 +7,9 @@ var browsermobProxy = require('./browsermob-proxy')
   , webdriver = require('selenium-webdriver');
 
 describe('locally hosted version of ThoughtWorks.com', function () {
-  var testPort = '8000';
+  var testPort = '8000';  // without Squid proxy
+  //var testPort = '80';  // with Squid proxy
   var testHostIP = netutil().networkIPs()[0];
-  console.log(testHostIP);
 
   var proxyControlPort = '9090';
   var proxyPort = '9091';
