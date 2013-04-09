@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "chai": "1.5.x",
-    "deferred": "0.6.x",
     "mocha": "1.9.x",
     "request": "2.16.x",
     "selenium-webdriver": "2.31.x",
