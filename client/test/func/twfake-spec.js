@@ -16,22 +16,32 @@ describe('locally hosted version of ThoughtWorks.com', function () {
   //var testServerPort = '80';  // with Squid proxy
   var testServerHostIP = netutil().networkIPs()[0]; // don't use 127.0.0.1 as this changes the behaviour
 
-  var proxy = browsermobProxy('9090', '9091');
-  var driver;
+  var proxy = browsermobProxy('9090');
+  var driver, phantomjs;
 
   beforeEach(function (done) {
-    spawn('phantomjs', ['--webdriver=4444', '--proxy=localhost:9091']).unref();
-    proxy.start(function onSuccess() {
-      driver = new webdriver.Builder().usingServer('http://localhost:4444/wd/hub').build();
-      if (limitBandwidth) {
-        proxy.limitBandwidth(downstreamKbps, upstreamKbps, latencyMillis, done, done);
-      } else {
-        done();
-      }
-    }, done);
+    proxy.start(function onSuccess(proxyPort) {
+      phantomjs = spawn('phantomjs', ['--webdriver=4444', '--proxy=localhost:' + proxyPort], {detached: false});
+      setTimeout(function () {
+        driver = new webdriver.Builder().usingServer('http://localhost:4444/wd/hub').build();
+        proxy.limitBandwidth(limitBandwidth, downstreamKbps, upstreamKbps, latencyMillis,
+          function onSuccess() {
+//            console.log('ho');
+            done();
+          }, function onError(err) {
+//            console.log('err2');
+            phantomjs.kill();
+            done(err);
+          });
+      }, 2000);
+    }, function onError(err) {
+//      console.log('err1');
+      done(err);
+    });
   });
 
   afterEach(function (done) {
+    phantomjs.kill();
     proxy.stop('twfake', function onSuccess() { driver.quit(); done(); }, done);
   });
 

@@ -18,17 +18,19 @@ module.exports = function () {
   var fs = require('fs')
     , request = require('request');
 
-  return function (browsermobPort, proxyPort) {
-    if (!browsermobPort) browsermobPort = '8080';
-    if (!proxyPort) proxyPort = '8081';
+  return function (controlPort, proxyPortIfFixed) {
+    var browsermobPort = controlPort ? controlPort : '8080';
+    var proxyPort = proxyPortIfFixed;
     var browsermobHost = 'http://localhost:' + browsermobPort + '/proxy/';
 
     var start = function (onSuccess, onError) {
-      request.post(browsermobHost, {form: {port: proxyPort}}, function (err, response, body) {
+      var requestBody = proxyPort ? {form: {port: proxyPort}} : undefined;
+      request.post(browsermobHost, requestBody, function (err, response, body) {
         if (err && onError) return onError(err);
+        proxyPort = JSON.parse(body).port;
         request.put(browsermobHost + proxyPort + '/har', {form: {captureHeaders: true, captureContent: false, captureBinaryContent: false}}, function (err, response, body) {
           if (err && onError) return onError(err);
-          if (onSuccess) return onSuccess(response);
+          if (onSuccess) return onSuccess(proxyPort);
         });
       });
     };
@@ -51,9 +53,9 @@ module.exports = function () {
       });
     };
 
-    var limitBandwidth = function (downstreamKbps, upstreamKbps, latencyMillis, onSuccess, onError) {
+    var limitBandwidth = function (enable, downstreamKbps, upstreamKbps, latencyMillis, onSuccess, onError) {
       request.put(browsermobHost + proxyPort + '/limit',
-                  {form: { downstreamKbps: downstreamKbps, upstreamKbps: upstreamKbps, latency:latencyMillis, enable: true }},
+                  {form: { downstreamKbps: downstreamKbps, upstreamKbps: upstreamKbps, latency:latencyMillis, enable: enable }},
                   function (err, response, body) {
         if (err && onError) return onError(err);
         if (onSuccess) return onSuccess(response);
