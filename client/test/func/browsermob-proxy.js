@@ -51,7 +51,7 @@ module.exports = function () {
       });
     };
 
-    var limitBandwidth = function (downstreamKbps, upstreamKbps, latencyMillis) {
+    var limitBandwidth = function (downstreamKbps, upstreamKbps, latencyMillis, onSuccess, onError) {
       request.put(browsermobHost + proxyPort + '/limit',
                   {form: { downstreamKbps: downstreamKbps, upstreamKbps: upstreamKbps, latency:latencyMillis, enable: true }},
                   function (err, response, body) {

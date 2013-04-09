@@ -9,7 +9,6 @@ module.exports = function () {
     var networkIPs = function () {
       var interfaces = os.networkInterfaces();
       var addresses = [];
-      console.log(interfaces);
       for (var networkInterface in interfaces) {
         for (var networkAddressIndex in interfaces[networkInterface]) {
           var addressEntry = interfaces[networkInterface][networkAddressIndex];
