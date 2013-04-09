@@ -24,7 +24,7 @@ You won't see any content (response bodies) in HAR viewer, it's buggy so the scr
 
 If you need to increase the timeout for your tests, look in the file `client/package.json`
 
-To check out the code again, run: `git clone git@github.com:halvards/httplab.git`
+To check out the code again, visit [GitHub](https://github.com/halvards/httplab)
 
 If you seem to lose network connectivity in the virtual machine, try disabling and re-enabling networking via the top
 right hand menu bar icon.
