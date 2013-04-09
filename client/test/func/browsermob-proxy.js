@@ -16,6 +16,7 @@
 
 module.exports = function () {
   var fs = require('fs')
+    , deferred = require('deferred')
     , request = require('request');
 
   return function (controlPort, proxyPortIfFixed) {
@@ -23,57 +24,101 @@ module.exports = function () {
     var proxyPort = proxyPortIfFixed;
     var browsermobHost = 'http://localhost:' + browsermobPort + '/proxy/';
 
-    var start = function (onSuccess, onError) {
+    var start = function () {
+      var defer = deferred();
       var requestBody = proxyPort ? {form: {port: proxyPort}} : undefined;
       request.post(browsermobHost, requestBody, function (err, response, body) {
-        if (err && onError) return onError(err);
-        proxyPort = JSON.parse(body).port;
-        request.put(browsermobHost + proxyPort + '/har', {form: {captureHeaders: true, captureContent: false, captureBinaryContent: false}}, function (err, response, body) {
-          if (err && onError) return onError(err);
-          if (onSuccess) return onSuccess(proxyPort);
-        });
+        if (err) {
+          defer.reject(err);
+        } else {
+          proxyPort = JSON.parse(body).port;
+          request.put(browsermobHost + proxyPort + '/har', {form: {captureHeaders: true, captureContent: true, captureBinaryContent: false}}, function (err, response, body) {
+            if (err) {
+              defer.reject(err);
+            } else {
+              defer.resolve(proxyPort);
+            }
+          });
+        }
       });
-    };
+      return defer.promise;
+    }
 
-    var stop = function (filename, onSuccess, onError) {
+    var firstPage = function (proxyPort) {
+      var defer = deferred();
+      request.put(browsermobHost + proxyPort + '/har', {form: {captureHeaders: true, captureContent: false, captureBinaryContent: false}}, function (err, response, body) {
+        if (err) {
+          defer.reject(err);
+        } else {
+          defer.resolve(response);
+        }
+      });
+      return defer.promise;
+    }
+
+    var stop = function (filename) {
+      var defer = deferred();
       request.get(browsermobHost + proxyPort + '/har', function (err, response, body) {
-        if (err && onError) return onError(err);
-        fs.writeFileSync(filename + '.har', body, 'utf8');
-        request.del(browsermobHost + proxyPort, function (err, response, body) {
-          if (err && onError) return onError(err);
-          if (onSuccess) return onSuccess(response);
-        });
+        if (err) {
+          deferr.reject(err);
+        } else {
+          fs.writeFileSync(filename + '.har', body, 'utf8');
+          request.del(browsermobHost + proxyPort, function (err, response, body) {
+            if (err) {
+              defer.reject(err);
+            } else {
+              defer.resolve(response);
+            }
+          });
+        }
       });
+      return defer.promise;
     };
 
-    var newPage = function (onSuccess, onError) {
+    var newPage = function () {
+      var defer = deferred();
       request.put(browsermobHost + proxyPort + '/har/pageRef', function (err, response, body) {
-        if (err && onError) return onError(err);
-        if (onSuccess) return onSuccess(response);
+        if (err) {
+          defer.reject(err);
+        } else {
+          defer.resolve(response);
+        }
       });
+      return defer.promise;
     };
 
-    var limitBandwidth = function (enable, downstreamKbps, upstreamKbps, latencyMillis, onSuccess, onError) {
+    var limitBandwidth = function (enable, downstreamKbps, upstreamKbps, latencyMillis) {
+      var defer = deferred();
       request.put(browsermobHost + proxyPort + '/limit',
                   {form: { downstreamKbps: downstreamKbps, upstreamKbps: upstreamKbps, latency:latencyMillis, enable: enable }},
                   function (err, response, body) {
-        if (err && onError) return onError(err);
-        if (onSuccess) return onSuccess(response);
+        if (err) {
+          defer.reject(err);
+        } else {
+          defer.resolve(response);
+        }
       });
+      return defer.promise;
     };
 
-    var unlimitBandwidth = function (downstreamKbps, upstreamKbps, latencyMillis) {
+    var unlimitBandwidth = function () {
+      var defer = deferred();
       request.put(browsermobHost + proxyPort + '/limit', {form: { enable: false }}, function (err, response, body) {
-        if (err && onError) return onError(err);
-        if (onSuccess) return onSuccess(response);
+        if (err) {
+          defer.reject(err);
+        } else {
+          defer.resolve(response);
+        }
       });
+      return defer.promise;
     };
 
     return {
       start: start,
       stop: stop,
       newPage: newPage,
-      limitBandwidth: limitBandwidth
+      limitBandwidth: limitBandwidth,
+      unlimitBandwidth: unlimitBandwidth
     };
   };
 }();
