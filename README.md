@@ -18,9 +18,11 @@ To view a HAR file, use the `har` command
 
 To switch keyboard control back to Mac OS, press the _left_ Command key once.
 
-## Troubleshooting
+A HTTP 1.1 cache reference is available here: [http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html](http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html)
 
-You won't see any content (response bodies) in HAR viewer, it's buggy so the scripts only capture the headers.
+
+
+## Troubleshooting
 
 If you need to increase the timeout for your tests, look in the file `client/package.json`
 
@@ -34,8 +36,12 @@ Monitor the health of browsermob-proxy in `/var/log/browsermob-proxy.log`
 There's no easy way to restart browsermob-proxy, you need to look for the process ID (PID) using `ps -ef` and use
 `kill` to stop it. Run `/opt/browsermob-proxy/bin/browsermob-proxy --port 9090` to start it again.
 
+If you really get stuck you can restore the virtual machine snapshot in VirtualBox to take you back to the beginning.
+
 ## Links
 
+- The [Caching in HTTP](http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html) section of the [HTTP 1.1 specification](http://www.w3.org/Protocols/rfc2616/rfc2616.html)
+- Mark Nottingham's [Caching Tutorial](http://www.mnot.net/cache_docs/)
 - [NodeJS](http://nodejs.org/)
 - [ExpressJS](http://expressjs.com/)
 - [PhantomJS](http://phantomjs.org/)

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha --ui bdd --recursive --reporter spec --timeout 10000"
+    "test": "node_modules/mocha/bin/mocha --ui bdd --recursive --reporter spec --timeout 60000"
   },
   "dependencies": {
     "chai": "1.5.x",
