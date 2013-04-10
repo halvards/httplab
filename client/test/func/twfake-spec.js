@@ -7,7 +7,7 @@ var browsermobProxy = require('./browsermob-proxy')
   , seleniumWebdriver = require('selenium-webdriver');
 
 describe('locally hosted version of ThoughtWorks.com', function () {
-  var limitBandwidth = true;  // set true and adjust parameters below to simulate a low-bandwidth, high latency connection
+  var limitBandwidth = false;  // set true and adjust parameters below to simulate a low-bandwidth, high latency connection
   var downstreamKbps = 64;
   var upstreamKbps = 64;
   var latencyMillis = 100;
@@ -23,17 +23,17 @@ describe('locally hosted version of ThoughtWorks.com', function () {
     proxy.start()
       .then(function (proxyPort) {
         phantomjs = phantomjsSpawn(4444, proxyPort);
-        return phantomjs.start();
-      })
-      .then(function () {
-        webdriver = new seleniumWebdriver.Builder().usingServer('http://localhost:4444/wd/hub').build();
-      })
-      .then(proxy.limitBandwidth(limitBandwidth, downstreamKbps, upstreamKbps, latencyMillis))
-      .then(function success() {
-        done();
-      }, function error(err) {
-        phantomjs.stop();
-        done(err);
+        phantomjs.start()
+          .then(function () {
+            webdriver = new seleniumWebdriver.Builder().usingServer('http://localhost:4444/wd/hub').build();
+          })
+          .then(proxy.limitBandwidth(limitBandwidth, downstreamKbps, upstreamKbps, latencyMillis))
+          .then(function success() {
+            done();
+          }, function error(err) {
+            phantomjs.stop();
+            done(err);
+          });
       });
   });
 
