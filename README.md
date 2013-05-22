@@ -2,6 +2,8 @@
 
 A lab exercise to explore HTTP caching headers.
 
+The included `setup.sh` script will check for prerequisites and set up required software to run the lab exercise.
+
 ## Tips
 
 To start the server, go to the `service` directory and run
@@ -25,6 +27,10 @@ To run the test script, go to the `client` directory and run
 To view a HAR file, use the `har.sh` script in the `client` directory
 
     [client]$ ./har.sh twfake.har
+
+## Squid (Advanced)
+
+The client test script can be run against a [Squid](http://www.squid-cache.org/) caching reverse proxy rather than directly against the ExpressJS server. The `setup.sh` script doesn't install Squid, but it can be installed using [Homebrew](http://mxcl.github.io/homebrew/). A config file template can be found in the `service/config` directory.
 
 ## Troubleshooting
 
