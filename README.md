@@ -1,26 +1,30 @@
 # httplab
 
-## Tips
+A lab exercise to explore HTTP caching headers.
 
-Any password is `vagrant`
+## Tips
 
 To start the server, go to the `service` directory and run
 
+    [service]$ npm start
+
+The server will restart when any `.js` file in the `service` directory changes.
+
+The client test script requires BrowserMob Proxy to be running. To start it, either use the `proxy.sh` script in the `client` directory or run
+
     [client]$ npm start
 
-To run the test script(s), go to the `client` directory and run
+You can leave BrowserMob Proxy running between test script executions. However, when you want to shut it down, run
 
-    [service]$ npm test
+    [client]$ npm stop
 
-To view a HAR file, use the `har` command
+To run the test script, go to the `client` directory and run
 
-    [client]$ har twfake.har
+    [client]$ npm test
 
-To switch keyboard control back to Mac OS, press the _left_ Command key once.
+To view a HAR file, use the `har.sh` script in the `client` directory
 
-A HTTP 1.1 cache reference is available here: [http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html](http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html)
-
-
+    [client]$ ./har.sh twfake.har
 
 ## Troubleshooting
 
@@ -28,23 +32,19 @@ If you need to increase the timeout for your tests, look in the file `client/pac
 
 To check out the code again, visit [GitHub](https://github.com/halvards/httplab)
 
-If you seem to lose network connectivity in the virtual machine, try disabling and re-enabling networking via the top
-right hand menu bar icon.
-
-Monitor the health of browsermob-proxy in `/var/log/browsermob-proxy.log`
-
-There's no easy way to restart browsermob-proxy, you need to look for the process ID (PID) using `ps -ef` and use
-`kill` to stop it. Run `/opt/browsermob-proxy/bin/browsermob-proxy --port 9090` to start it again.
-
-If you really get stuck you can restore the virtual machine snapshot in VirtualBox to take you back to the beginning.
-
 ## Links
+
+HTTP Caching:
 
 - The [Caching in HTTP](http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html) section of the [HTTP 1.1 specification](http://www.w3.org/Protocols/rfc2616/rfc2616.html)
 - Mark Nottingham's [Caching Tutorial](http://www.mnot.net/cache_docs/)
+
+The code:
+
 - [NodeJS](http://nodejs.org/)
 - [ExpressJS](http://expressjs.com/)
 - [PhantomJS](http://phantomjs.org/)
 - [WebDriverJS](https://code.google.com/p/selenium/wiki/WebDriverJs)
-- [browsermob-proxy](https://github.com/webmetrics/browsermob-proxy)
+- [BrowserMob Proxy](https://github.com/webmetrics/browsermob-proxy)
 - [HAR Viewer](http://www.softwareishard.com/blog/har-viewer/)
+
